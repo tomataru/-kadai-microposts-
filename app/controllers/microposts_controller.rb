@@ -1,7 +1,13 @@
 class MicropostsController < ApplicationController
   def create
-  end
-
-  def destroy
+    @micropost = current_user.microposts.build(micropost_params)
+    if @micropost.save
+      flash[:success] = 'メッセージを投稿しました。'
+      redirect_to root_url
+    else
+      @microposts = current_user.feed_microposts.order('created_at DESC').page(params[:page])
+      flash.now[:danger] = 'メッセージの投稿に失敗しました。'
+      render 'toppages/index'
+    end
   end
 end
